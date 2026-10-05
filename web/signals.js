@@ -8,25 +8,23 @@ export class SignalPanel {
   constructor(onUse) {
     this.horizon = 5;
     this.version = 0;
+    this.serverTimeOffset = null;
     this.onUse = onUse;
     $("refresh-signal").onclick = () => this.setMarket(this.symbol);
     $("use-signal").onclick = () => {
       const result = this.result;
       if (
         !result ||
+        this.serverTimeOffset === null ||
         result.direction === "WAIT" ||
-        Date.now() / 1000 >= result.expires ||
+        this.now() >= result.expires ||
         !this.socket?.connected
       )
         return;
       onUse(result.direction, this.horizon);
     };
     this.clock = setInterval(() => {
-      if (
-        this.result &&
-        Date.now() / 1000 >= this.result.expires &&
-        !this.expired
-      ) {
+      if (this.result && this.now() >= this.result.expires && !this.expired) {
         this.expired = true;
         this.render({
           ...this.result,
@@ -37,6 +35,11 @@ export class SignalPanel {
         });
       }
     }, 1000);
+  }
+  now() {
+    return this.serverTimeOffset === null
+      ? NaN
+      : Date.now() / 1000 + this.serverTimeOffset;
   }
   setHorizon(horizon) {
     this.horizon = horizon;
@@ -54,6 +57,7 @@ export class SignalPanel {
     clearTimeout(this.refreshTimer);
     this.socket?.close();
     this.socket = null;
+    this.serverTimeOffset = null;
     this.symbol = symbol;
     this.candles = null;
     $("signal-market").textContent = symbol;
@@ -73,6 +77,11 @@ export class SignalPanel {
     try {
       await socket.connect(PUBLIC_URL);
       if (version !== this.version) return;
+      const response = await socket.request({ time: 1 });
+      if (version !== this.version) return;
+      if (!Number.isFinite(response.time) || response.time <= 0)
+        throw new Error("Invalid Deriv server time");
+      this.serverTimeOffset = response.time - Date.now() / 1000;
       await this.load(version, socket);
     } catch {
       if (version === this.version) {
@@ -99,7 +108,7 @@ export class SignalPanel {
       this.analyze();
       this.refreshTimer = setTimeout(
         () => void this.load(version, socket),
-        (61 - ((Date.now() / 1000) % 60)) * 1000,
+        (61 - (this.now() % 60)) * 1000,
       );
     } catch {
       if (version !== this.version) return;
@@ -108,7 +117,10 @@ export class SignalPanel {
   }
   analyze() {
     this.expired = false;
-    this.result = evaluateMarket(this.candles, { horizon: this.horizon });
+    this.result = evaluateMarket(this.candles, {
+      horizon: this.horizon,
+      now: this.now(),
+    });
     this.render(this.result);
   }
   render(result) {
@@ -148,7 +160,10 @@ export class SignalPanel {
       ? `Model influences: ${result.drivers.map((d) => `${d.name.toLowerCase()} (${Math.abs(d.value) < 0.01 ? "neutral" : d.value > 0 ? "toward rise" : "toward fall"})`).join(" · ")}.`
       : "";
     $("use-signal").disabled =
-      !active || !this.socket?.connected || Date.now() / 1000 >= result.expires;
+      !active ||
+      this.serverTimeOffset === null ||
+      !this.socket?.connected ||
+      this.now() >= result.expires;
   }
   close() {
     this.version++;

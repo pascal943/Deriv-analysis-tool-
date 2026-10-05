@@ -42,6 +42,7 @@ const signalPanel = new SignalPanel((direction) => {
 $("duration").addEventListener("input", () =>
   signalPanel.setHorizon(Number($("duration").value)),
 );
+signalPanel.setHorizon(Number($("duration").value));
 const money = (value, currency = state.account?.currency || "USD") =>
   `${Number(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 const price = (value) =>

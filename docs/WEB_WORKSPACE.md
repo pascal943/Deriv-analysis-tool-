@@ -8,7 +8,7 @@ Requires Node.js 24 or newer. The browser app and development server have no npm
 npm start
 ```
 
-Open `http://localhost:3000`. Set `PORT` to change the port. Stop with Ctrl+C.
+Open `http://localhost:3000`. Set `PORT` to change the port. The server binds to `127.0.0.1` by default; set `HOST=0.0.0.0` explicitly if you need LAN access. Stop with Ctrl+C.
 
 ```bash
 npm test
@@ -57,7 +57,7 @@ Public market data has been verified against Deriv. Authentication and trading U
 
 ## Market intelligence engine
 
-The **Orbit Intelligence** panel adds an experimental, locally trained model. It uses Deriv's last 1,000 one-minute candles (usually 999 closed candles plus an excluded incomplete candle). Market changes reset the analysis; chart tick-range changes do not. Candle history refreshes just after each minute boundary. The forecast horizon follows the trade ticket's duration.
+The **Orbit Intelligence** panel adds an experimental, locally trained model. It uses Deriv's last 1,000 one-minute candles (usually 999 closed candles plus an excluded incomplete candle). Market changes reset the analysis; chart tick-range changes do not. The analysis connection synchronizes with Deriv server time. Candle history refreshes just after each server minute boundary, and candle freshness and signal expiry use that same adjusted clock. The forecast horizon follows the trade ticket's duration.
 
 ### Model and evidence
 

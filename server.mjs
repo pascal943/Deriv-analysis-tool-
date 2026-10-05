@@ -31,6 +31,8 @@ http
       res.writeHead(500).end("Unable to load application");
     }
   })
-  .listen(Number(process.env.PORT || 3000), "0.0.0.0", () =>
-    console.log("Deriv workspace ready"),
+  .listen(
+    Number(process.env.PORT || 3000),
+    process.env.HOST || "127.0.0.1",
+    () => console.log("Deriv workspace ready"),
   );

@@ -2,6 +2,17 @@
 
 A powerful tool for analyzing and tracking derivative trading data, market trends, and portfolio performance.
 
+## Web trading workspace
+
+A browser dashboard with live Deriv market data, demo account linking, and manual demo trades is now available.
+
+```bash
+# Requires Node.js 24+; no npm install needed
+npm start
+```
+
+Open `http://localhost:3000`. See [setup and account connection](docs/WEB_WORKSPACE.md) for details.
+
 ## Overview
 
 The Deriv Analysis Tool is designed to help traders and analysts:

@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101916" />
+    <title>Orbit — Deriv trading workspace</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Orbit home"
+        ><span class="brand-icon">◈</span> orbit<span class="brand-dot"
+          >.</span
+        ></a
+      >
+      <div class="workspace-label">YOUR WORKSPACE</div>
+      <nav>
+        <a class="nav-item active" href="#terminal"
+          ><span>▥</span> Trading terminal <span class="nav-dot"></span></a
+        ><a class="nav-item" href="#activity"><span>◷</span> Trade activity</a
+        ><button class="nav-item" id="sidebar-connect">
+          <span>⇄</span> Account connection
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="connection-card">
+          <span class="deriv-logo">deriv</span>
+          <p>Your markets.<br />Your perspective.</p>
+          <small>Connected by Deriv API</small>
+        </div>
+        <a
+          class="help-link"
+          href="https://developers.deriv.com/docs/"
+          target="_blank"
+          rel="noreferrer"
+          >API documentation <span>↗</span></a
+        >
+        <div class="profile">
+          <div class="avatar">O</div>
+          <div>Personal workspace<small>Demo trading</small></div>
+        </div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header>
+        <div class="breadcrumb">
+          Workspace <span>/</span> <strong>Trading terminal</strong>
+        </div>
+        <div class="header-right">
+          <span class="status" id="feed-status">Connecting…</span
+          ><button class="button primary" id="connect">
+            Connect Deriv <span>↗</span>
+          </button>
+        </div>
+      </header>
+      <main id="terminal">
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">A CLEARER VIEW OF THE MARKET</div>
+            <h1>Your trading workspace<span>.</span></h1>
+            <p>Follow the markets. Find your moment.</p>
+          </div>
+          <span class="mode-badge">◉ &nbsp; DEMO WORKSPACE</span>
+        </section>
+        <div class="notice" id="notice" role="status" hidden></div>
+        <section class="metrics" aria-label="Workspace overview">
+          <article class="metric">
+            <span>Account balance <i>↗</i></span
+            ><strong id="balance">— <small>USD</small></strong>
+            <div id="account-label">Connect your demo account</div>
+          </article>
+          <article class="metric">
+            <span>Selected market <i>∿</i></span
+            ><strong id="spot-price">—</strong>
+            <div id="price-change">Waiting for market data</div>
+          </article>
+          <article class="metric">
+            <span>Visible range high <i>↑</i></span
+            ><strong id="range-high">—</strong>
+            <div>Based on displayed ticks</div>
+          </article>
+          <article class="metric">
+            <span>Visible range low <i>↓</i></span
+            ><strong id="range-low">—</strong>
+            <div>Based on displayed ticks</div>
+          </article>
+        </section>
+        <section
+          class="panel intelligence-panel"
+          aria-labelledby="intelligence-title"
+        >
+          <div class="panel-heading">
+            <div>
+              <div class="eyebrow">ORBIT INTELLIGENCE · EXPERIMENTAL ML</div>
+              <h2 id="intelligence-title">
+                Read the market. Check the evidence.
+              </h2>
+            </div>
+            <button id="refresh-signal" class="button">
+              Refresh analysis ↻
+            </button>
+          </div>
+          <div class="intelligence-body">
+            <div class="signal-verdict">
+              <span class="small-badge" id="signal-market">R_100</span>
+              <h3
+                id="signal-direction"
+                class="signal-direction"
+                aria-live="polite"
+              >
+                No trade
+              </h3>
+              <p id="signal-horizon">
+                5-minute outlook · follows trade duration
+              </p>
+              <ul id="signal-reasons">
+                <li>Waiting for market history.</li>
+              </ul>
+              <button class="button primary" id="use-signal" disabled>
+                Use direction in ticket →
+              </button>
+            </div>
+            <div class="signal-evidence">
+              <div class="signal-metrics">
+                <div>
+                  <span>Rise model score</span
+                  ><strong id="model-score">—</strong
+                  ><small>Raw model score, not win probability</small>
+                </div>
+                <div>
+                  <span>Recent test hit rate</span
+                  ><strong id="test-accuracy">—</strong
+                  ><small id="test-samples">Not evaluated yet</small>
+                </div>
+                <div>
+                  <span>Simple baseline hit rate</span
+                  ><strong id="baseline-score">—</strong
+                  ><small>Same test signals, fixed direction</small>
+                </div>
+                <div>
+                  <span>RSI · 14 candles</span><strong id="model-rsi">—</strong
+                  ><small id="model-trend">Waiting for closed candles</small>
+                </div>
+              </div>
+              <p id="model-drivers"></p>
+              <div class="signal-meta" id="signal-age">No current analysis</div>
+            </div>
+          </div>
+          <details class="signal-method">
+            <summary>How to interpret this analysis</summary>
+            <p>
+              A local machine-learning model learns from earlier one-minute
+              candles and checks later candles it did not train on. Rise/Fall
+              setups need trend agreement, a strong model score, at least 30
+              qualifying test signals, a test result above chance, and an
+              improvement over the baseline. Otherwise it abstains.
+            </p>
+            <p>
+              Scores are not calibrated probabilities. Recent test results do
+              not establish future accuracy or profitability. The outlook starts
+              at the last candle close; it is not the exact entry or expiry of a
+              new contract. Payouts and execution costs are not included.
+              Signals expire at the next minute boundary. Demo use only;
+              purchases always need your confirmation.
+            </p>
+          </details>
+        </section>
+        <div class="terminal-grid">
+          <section class="panel chart-panel">
+            <div class="panel-heading">
+              <div class="market-title">
+                <span class="market-icon">∿</span>
+                <div>
+                  <h2 id="market-name">Volatility 100 Index</h2>
+                  <small id="market-symbol">R_100 · Derived indices</small>
+                </div>
+              </div>
+              <span class="small-badge">TICK CHART</span>
+            </div>
+            <div class="chart-toolbar">
+              <label class="select-label"
+                >Market
+                <select id="market" aria-label="Market">
+                  <option value="R_100">Volatility 100 Index</option>
+                </select></label
+              >
+              <div class="range-buttons" aria-label="Chart range">
+                <button data-count="60">60 ticks</button
+                ><button class="selected" data-count="120">120 ticks</button
+                ><button data-count="300">300 ticks</button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <svg
+                id="chart"
+                viewBox="0 0 900 320"
+                role="img"
+                aria-label="Live price chart"
+              >
+                <text x="450" y="160" text-anchor="middle">
+                  Connecting to market data…
+                </text>
+              </svg>
+            </div>
+            <div class="chart-footer">
+              <span
+                ><span class="green-dot"></span>
+                <span id="chart-source">Waiting for Deriv</span></span
+              ><span id="last-tick">—</span>
+            </div>
+          </section>
+          <section class="panel trade-panel">
+            <div class="panel-heading">
+              <h2>Place a trade</h2>
+              <span class="small-badge green">DEMO</span>
+            </div>
+            <form id="trade-form">
+              <label
+                >Contract type <span>ⓘ</span>
+                <div class="readonly-field">
+                  Rise / Fall <span>⌁</span>
+                </div></label
+              >
+              <div class="direction-buttons">
+                <button type="button" data-direction="CALL" class="selected">
+                  ↗ &nbsp; Rise</button
+                ><button type="button" data-direction="PUT">
+                  ↘ &nbsp; Fall
+                </button>
+              </div>
+              <label for="duration"
+                >Duration
+                <input
+                  id="duration"
+                  type="number"
+                  min="1"
+                  max="60"
+                  step="1"
+                  value="5"
+                  required
+                /><span class="field-unit">minutes</span></label
+              ><label for="stake"
+                >Stake
+                <input
+                  id="stake"
+                  type="number"
+                  min="0.35"
+                  max="100"
+                  step="0.01"
+                  value="10"
+                  required
+                /><span class="field-unit" id="stake-currency">USD</span></label
+              >
+              <div class="trade-summary">
+                <span>Trading account</span><strong>Deriv demo</strong
+                ><span>Potential payout</span
+                ><strong id="payout">Get a quote</strong>
+              </div>
+              <button
+                class="button primary wide"
+                id="quote-button"
+                type="submit"
+                disabled
+              >
+                Review trade <span>→</span>
+              </button>
+              <p class="trade-note" id="trade-note">
+                Connect a demo account to start trading with virtual funds.
+              </p>
+            </form>
+          </section>
+          <section class="panel activity-panel" id="activity">
+            <div class="panel-heading">
+              <div class="activity-heading">
+                <h2>Trade activity</h2>
+                <span class="count" id="trade-count">0</span>
+              </div>
+              <span class="muted">This session</span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Contract</th>
+                    <th>Reference</th>
+                    <th>Stake</th>
+                    <th>Status</th>
+                    <th>Profit / loss</th>
+                  </tr>
+                </thead>
+                <tbody id="trades"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="empty-trades">
+              <div class="empty-icon">⇄</div>
+              <h3>A fresh start for your next move</h3>
+              <p>Your demo trades will appear here once you place an order.</p>
+            </div>
+          </section>
+          <section class="insight-card">
+            <div class="eyebrow">BUILT FOR EXPLORATION</div>
+            <h2>Get a feel for<br />the market.</h2>
+            <p>
+              Explore live prices and practice your approach with a Deriv demo
+              account.
+            </p>
+            <button id="learn-connect">
+              Set up your connection <span>↗</span>
+            </button>
+            <div class="orbit-art" aria-hidden="true">◎</div>
+          </section>
+        </div>
+        <footer>
+          <span
+            ><span class="green-dot"></span> Market data supplied by Deriv</span
+          ><span
+            >Orbit workspace <span class="footer-divider">/</span> Demo trading
+            · Virtual funds</span
+          >
+        </footer>
+      </main>
+    </div>
+    <dialog id="connection-dialog">
+      <form id="connection-form">
+        <div class="dialog-heading">
+          <h2>Connect to Deriv</h2>
+          <button
+            type="button"
+            class="icon-button"
+            id="close-connect"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <p>
+          Link your demo Options account using a Deriv Personal Access Token.
+        </p>
+        <label for="app-id"
+          >Deriv application ID<input
+            id="app-id"
+            required
+            autocomplete="off"
+            placeholder="Your registered PAT app ID" /></label
+        ><label for="token"
+          >Personal Access Token<input
+            id="token"
+            type="password"
+            required
+            autocomplete="off"
+            placeholder="Paste your token here"
+        /></label>
+        <p class="small">
+          Use a token with the <strong>trade</strong> scope. Your token is used
+          only for this connection and is never saved.
+        </p>
+        <p class="form-error" id="connection-error" role="alert"></p>
+        <button class="button primary wide" id="link-account">
+          Connect demo account →</button
+        ><a
+          class="doc-link"
+          href="https://developers.deriv.com/docs/intro/authentication/"
+          target="_blank"
+          rel="noreferrer"
+          >How to create an app and token ↗</a
+        >
+      </form>
+    </dialog>
+    <dialog id="quote-dialog">
+      <div class="dialog-heading">
+        <h2>Review your demo trade</h2>
+        <button class="icon-button" id="close-quote" aria-label="Close">
+          ×
+        </button>
+      </div>
+      <p id="quote-description"></p>
+      <div class="quote-details" id="quote-details"></div>
+      <p class="small">
+        Quotes expire after 20 seconds. This trade uses virtual funds.
+      </p>
+      <button class="button primary wide" id="buy-button">
+        Confirm demo trade
+      </button>
+    </dialog>
+  </body>
+</html>
